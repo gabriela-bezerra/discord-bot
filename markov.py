@@ -1,30 +1,9 @@
 """A Markov chain generator that can tweet random messages."""
 
 import sys
-from random import choice
+from random import choice, random
 import os
 import discord
-
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(intents=intents)
-
-
-@client.event
-async def on_ready():
-    print(f'We have logged in as {client.user}')
-
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('Hey there!'):
-        await message.channel.send('Hello!')
-
-client.run(os.environ.get('DISCORD_TOKEN'))
 
 
 def open_and_read_file(filenames):
@@ -87,3 +66,27 @@ text = open_and_read_file(filenames)
 
 # Get a Markov chain
 chains = make_chains(text)
+
+random_text = make_text(chains)
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
+
+
+@client.event
+async def on_ready():
+    print(f'We have logged in as {client.user}')
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('Hey there!'):
+        await message.channel.send(random_text)
+
+client.run(os.environ.get('DISCORD_TOKEN'))
